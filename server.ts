@@ -2,7 +2,6 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
-import { createServer as createViteServer } from 'vite';
 import { adServerDb } from './server/db.ts';
 import { PREDEFINED_SLOTS } from './src/types.ts';
 
@@ -495,7 +494,12 @@ async function startServer() {
   // ==========================================
   // VITE CLIENT MIDDLEWARE / SPA FALLBACK
   // ==========================================
-  if (process.env.NODE_ENV !== 'production') {
+  const isProduction =
+    process.env.NODE_ENV === 'production' ||
+    (!process.env.NODE_ENV && fs.existsSync(path.join(process.cwd(), 'dist', 'index.html')));
+
+  if (!isProduction) {
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',

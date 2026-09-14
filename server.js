@@ -1,4 +1,6 @@
 // Root entry point for hosting providers (Hostinger, cPanel, Render, Heroku, Plesk, Cloud Run)
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
