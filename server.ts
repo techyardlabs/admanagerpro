@@ -5,7 +5,7 @@ import fs from 'fs';
 import { adServerDb } from './server/db.ts';
 import { PREDEFINED_SLOTS } from './src/types.ts';
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 // 1x1 Transparent GIF Buffer for pixel impression tracking
 const TRANSPARENT_GIF_1X1 = Buffer.from(
@@ -494,9 +494,11 @@ async function startServer() {
   // ==========================================
   // VITE CLIENT MIDDLEWARE / SPA FALLBACK
   // ==========================================
+  const isCompiledProduction = typeof __dirname !== 'undefined' && __dirname.includes('dist');
   const isProduction =
     process.env.NODE_ENV === 'production' ||
-    (!process.env.NODE_ENV && fs.existsSync(path.join(process.cwd(), 'dist', 'index.html')));
+    isCompiledProduction ||
+    fs.existsSync(path.join(process.cwd(), 'dist', 'index.html'));
 
   if (!isProduction) {
     const { createServer: createViteServer } = await import('vite');
